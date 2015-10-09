@@ -1,0 +1,24 @@
+{
+    "docs": [
+        {
+            "location": "/", 
+            "text": "Graphing server metrics\n\n\nThe packages are being installed on \nfedora/rpm\n based linux system\n\n\nPrograms needed\n\n\n\n\ntelegraf/collectd - collect system metrics like cpu, io, network, mem\n\n\ninfluxdb - store data from telegraf/collectd\n\n\ngraphana - graph data recieved from influxdb\n\n\n\n\nInstallation and configuration\n\n\nPick either telegraf or collectd they both do the same thing except telegraf\nalso has network information.\n. \n\n\ntelegraf\n\n\nTelegraf is available \nhere.\n\n1) To install:\n\n\n#on amd: \nsudo dnf install http://getinfluxdb.org/telegraf/telegraf-0.1.9_amd64.deb\n\n#on intel:\nsudo dnf install http://get.influxdb.org/telegraf/telegraf-0.1.9-1.x86_64.rpm\n\n\n\n\n\n2) Generate the configure the file\n\n\ncd /opt/telegraf  \n./telegraf -sample-config \n telegraf.conf  \n\n\n\n\n\n3) Edit \ntelegraf.conf\n by keeping influxdb config but comment out other services that we won't send data to.\n\n\ncollectd\n\n\n1) Installation: \n\n\nsudo dnf install collectd\n\n\n\n\n\n2) To configure, edit the \n/etc/collectd.conf\n file.  \n\n\n# Enable the plugins that is needed like cpu and memory.  \nLoadPlugin cpu\nLoadPlugin memory\n\n# Enable the network plugin to send data to influxdb.\nLoadPlugin network\n\n# specify the server endpoint to send the data to\n\nPlugin \nnetwork\n\n  Server \nlocalhost\n \n25826\n\n\n/Plugin\n\n\n\n\n\n\n\n\nStart collectd with the configuration file specified\n\n\n\n\ncollected -C /etc/collectd.conf\n\n\n\n\ninfluxdb\n\n\n1) Installation:\n\n\nsudo dnf install influxdb\n\n\n\n\n2) Generate config file :\n\n\ncd /opt/influxdb/  \n./influxd config \n influxdb.conf  \n\n\n\n\n3) Edit the config file (if you're using collectd):\n\n\n[collectd]\n  enabled = true\n  bind-address = \n:25826\n\n  port = 25826\n  database = \ncollectd\n\n  retention-policy = \n\n  batch-size = 1000\n  batch-pending = 5\n  batch-timeout = \n10s\n\n  typesdb = \n/usr/share/collectd/types.db\n\n\n\n\n\n\n4) To run:  \n\n\ncd /opt/influxd/  \n./influxd -config config.toml \n\n\n\n\n\nGrafana\n\n\n1) Installation\n\n\nsudo dnf install grafana\n\n\n\n\n2) To start the grafana server\n\n\nsudo systemctl start grafana-server\n\n# check if its running\nsystemctl status grafana-server\n\n\n\n\n\n3) Access grafana at \nhttp://localhost:3000\n.  \n\n\nScreenshots from graphana", 
+            "title": "Home"
+        }, 
+        {
+            "location": "/#graphing-server-metrics", 
+            "text": "The packages are being installed on  fedora/rpm  based linux system", 
+            "title": "Graphing server metrics"
+        }, 
+        {
+            "location": "/#programs-needed", 
+            "text": "telegraf/collectd - collect system metrics like cpu, io, network, mem  influxdb - store data from telegraf/collectd  graphana - graph data recieved from influxdb", 
+            "title": "Programs needed"
+        }, 
+        {
+            "location": "/#installation-and-configuration", 
+            "text": "Pick either telegraf or collectd they both do the same thing except telegraf\nalso has network information. .   telegraf  Telegraf is available  here. \n1) To install:  #on amd: \nsudo dnf install http://getinfluxdb.org/telegraf/telegraf-0.1.9_amd64.deb\n\n#on intel:\nsudo dnf install http://get.influxdb.org/telegraf/telegraf-0.1.9-1.x86_64.rpm  2) Generate the configure the file  cd /opt/telegraf  \n./telegraf -sample-config   telegraf.conf    3) Edit  telegraf.conf  by keeping influxdb config but comment out other services that we won't send data to.  collectd  1) Installation:   sudo dnf install collectd  2) To configure, edit the  /etc/collectd.conf  file.    # Enable the plugins that is needed like cpu and memory.  \nLoadPlugin cpu\nLoadPlugin memory\n\n# Enable the network plugin to send data to influxdb.\nLoadPlugin network\n\n# specify the server endpoint to send the data to Plugin  network \n  Server  localhost   25826  /Plugin    Start collectd with the configuration file specified   collected -C /etc/collectd.conf  influxdb  1) Installation:  sudo dnf install influxdb  2) Generate config file :  cd /opt/influxdb/  \n./influxd config   influxdb.conf    3) Edit the config file (if you're using collectd):  [collectd]\n  enabled = true\n  bind-address =  :25826 \n  port = 25826\n  database =  collectd \n  retention-policy =  \n  batch-size = 1000\n  batch-pending = 5\n  batch-timeout =  10s \n  typesdb =  /usr/share/collectd/types.db   4) To run:    cd /opt/influxd/  \n./influxd -config config.toml    Grafana  1) Installation  sudo dnf install grafana  2) To start the grafana server  sudo systemctl start grafana-server\n\n# check if its running\nsystemctl status grafana-server  3) Access grafana at  http://localhost:3000 .    Screenshots from graphana", 
+            "title": "Installation and configuration"
+        }
+    ]
+}

@@ -1,0 +1,7 @@
+site_name: Graphing server metrics 
+#theme: readthedocs
+markdown_extensions: [fenced_code]
+repo_url: https://github.com/deflex/cig-mon/
+google_analytics: ['68580119-1', 'deflex.github.io/cig-mon']
+remote_name: gh-pages
+
