@@ -1,10 +1,30 @@
 ---
 - hosts: all
   tasks:
-
+  
+  # Installing and configuring collectd
   - name: Install collectd
     yum: pkg=collectd state=latest
   
+  - name: Edit collectd config
+    lineinfile: dest=/etc/collectd.conf
+                regexp='^#LoadPlugin cpu'
+                line='LoadPlugin cpu'
+                state=present
+
+    lineinfile: dest=/etc/collectd.conf
+                regexp='^#LoadPlugin df'
+                line='LoadPlugin df'
+                state=present
+
+    lineinfile: dest=/etc/collectd.conf
+                regexp="^#<Plugin network>"
+                line="<Plugin 'network'>\nServer 'localhost' '25826'</Plugin>"
+                insertbefore="^#<Plugin network>"
+                state=present
+  
+  
+  # Installing and configuring influxdb 
   - name: Install influxdb
     yum: pkg=influxdb state=latest
   
@@ -12,8 +32,18 @@
     command: /opt/influxdb/influxd config /opt/influxdb/influxd.conf
     when: "ansible_os_family == 'RedHat' or ansible_os_family == 'Fedora'"
 
+
+  # Installing and configuring telegraf
   - name: Install telegraf from remote repo
     yum: src=http://get.influxdb.org/telegraf/telegraf-0.1.9-1.x86_64.rpm
   
-  - name: Download telegraf
-    command: git clone https://github.com/influlxdb/telegraf.git
+
+
+  # Installing and configuring grafana
+  - name: Install grafana
+    yum: pkg=grafana state=latest
+
+  - name: Start grafana server
+    service: name=grafana-server state=started
+
+
