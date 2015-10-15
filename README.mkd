@@ -1,0 +1,6 @@
+# cig-mon
+
+Ansible script is being written. Until then see http://deflex.github.io/cig-mon
+
+
+

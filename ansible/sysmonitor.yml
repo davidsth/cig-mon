@@ -1,0 +1,19 @@
+---
+- hosts: all
+  tasks:
+
+  - name: Install collectd
+    yum: pkg=collectd state=latest
+  
+  - name: Install influxdb
+    yum: pkg=influxdb state=latest
+  
+  - name: Setup influxdb
+    command: /opt/influxdb/influxd config /opt/influxdb/influxd.conf
+    when: "ansible_os_family == 'RedHat' or ansible_os_family == 'Fedora'"
+
+  - name: Install telegraf from remote repo
+    yum: src=http://get.influxdb.org/telegraf/telegraf-0.1.9-1.x86_64.rpm
+  
+  - name: Download telegraf
+    command: git clone https://github.com/influlxdb/telegraf.git
