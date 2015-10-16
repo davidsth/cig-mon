@@ -1,47 +1,52 @@
 ---
-- hosts: all
+- hosts: localhost
+  sudo: yes
   tasks:
   
   # Installing and configuring collectd
-  - name: Install collectd
-    yum: pkg=collectd state=latest
-  
-  - name: Edit collectd config
-    lineinfile: dest=/etc/collectd.conf
-                regexp='^#LoadPlugin cpu'
-                line='LoadPlugin cpu'
-                state=present
+  #- name: Install collectd
+  #  yum: pkg=collectd state=latest
+  #
+  #- name: Edit collectd config
+  #  lineinfile: dest=/etc/collectd.conf
+  #              regexp='^#LoadPlugin cpu'
+  #              line='LoadPlugin cpu'
+  #              state=present
 
-    lineinfile: dest=/etc/collectd.conf
-                regexp='^#LoadPlugin df'
-                line='LoadPlugin df'
-                state=present
+  #  lineinfile: dest=/etc/collectd.conf
+  #              regexp='^#LoadPlugin df'
+  #              line='LoadPlugin df'
+  #              state=present
 
-    lineinfile: dest=/etc/collectd.conf
-                regexp="^#<Plugin network>"
-                line="<Plugin 'network'>\nServer 'localhost' '25826'</Plugin>"
-                insertbefore="^#<Plugin network>"
-                state=present
+  #  lineinfile: dest=/etc/collectd.conf
+  #              regexp="^#<Plugin network>"
+  #              line="<Plugin 'network'>\nServer 'localhost' '25826'</Plugin>"
+  #              insertbefore="^#<Plugin network>"
+  #              state=present
   
   
   # Installing and configuring influxdb 
   - name: Install influxdb
-    yum: pkg=influxdb state=latest
+    yum: name=https://s3.amazonaws.com/influxdb/influxdb-0.9.4.2-1.x86_64.rpm state=present
   
-  - name: Setup influxdb
-    command: /opt/influxdb/influxd config /opt/influxdb/influxd.conf
+  - name: Configure influxdb
+    command: /opt/influxdb/influxd config > /opt/influxdb/influxd.conf
     when: "ansible_os_family == 'RedHat' or ansible_os_family == 'Fedora'"
-
+  
+  - name: Start influxdb
+    command: /opt/influxdb/influxd -config /opt/influxdb/influxd.conf
 
   # Installing and configuring telegraf
   - name: Install telegraf from remote repo
-    yum: src=http://get.influxdb.org/telegraf/telegraf-0.1.9-1.x86_64.rpm
+    yum: name=http://get.influxdb.org/telegraf/telegraf-0.1.9-1.x86_64.rpm state=present
   
-
+  - name: Configure telegraf
+    command: /opt/telegraf/telegraf -sample-config > /opt/telegraf/telegraf.conf
 
   # Installing and configuring grafana
   - name: Install grafana
-    yum: pkg=grafana state=latest
+    yum: name=https://grafanarel.s3.amazonaws.com/builds/grafana-2.1.3-1.x86_64.rpm state=present
+
 
   - name: Start grafana server
     service: name=grafana-server state=started
