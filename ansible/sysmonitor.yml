@@ -1,6 +1,7 @@
 ---
 - hosts: localhost
-  sudo: yes
+  become: yes
+  become_method: sudo
   tasks:
   
   # Pick either collectd or telegraf
@@ -36,17 +37,17 @@
     when: "ansible_os_family == 'RedHat' or ansible_os_family == 'Fedora'"
   
   - name: Start influxdb
-    command: /opt/influxdb/influxd -config /opt/influxdb/influxd.conf > /dev/null 2>&1 &
+    shell: nohup /opt/influxdb/influxd -config /opt/influxdb/influxd.conf &
 
   # Installing and configuring telegraf
   - name: Install telegraf from remote repo
     yum: name=http://get.influxdb.org/telegraf/telegraf-0.1.9-1.x86_64.rpm state=present
   
   - name: Configure telegraf
-    command: cp ./roles/common/files/telegraf.conf /opt/telegraf/
+    shell: cp ./roles/common/files/telegraf.conf /opt/telegraf/
 
   - name: Start telegraf
-    command: /opt/telegraf/telegraf -config /opt/telegraf/telegraf.conf > /dev/null 2>&1 &
+    shell: nohup /opt/telegraf/telegraf -config /opt/telegraf/telegraf.conf &
 
   # Installing and configuring grafana
   - name: Install grafana
